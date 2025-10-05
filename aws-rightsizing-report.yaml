@@ -6,17 +6,17 @@ Parameters:
   RightsizingBucketName:
     Type: String
     Description: S3 bucket name
-    Default: <s3-bucket-name>
+    Default: report-s3-bucket
 
   RightsizingLambdaRoleName:
     Type: String
     Description: Lambda role name
-    Default: <lambda-role-name>
+    Default: report-lambda-iam-role
 
   RightsizingLambdaName:
     Type: String
     Description: Lambda name
-    Default: <lambda-name>
+    Default: report-lambda-name
 
   RightsizingCloudWatchGroupPrefix:
     Type: String
@@ -25,22 +25,22 @@ Parameters:
   RightsizingSNSTopicName:
     Type: String
     Description: SNS topic name
-    Default: <sns-topic-name>
+    Default: report-sns-topic
 
   RightsizingSNSSubscription1:
     Type: String
     Description: Email address
-    Default: <email-address>
+    Default: report-sns-topic-subscription-email
 
   RightsizingSNSSubscription2:
     Type: String
     Description: HTTPS endpoint
-    Default: <https-endpoint>
+    Default: report-sns-topic-subscription-https
 
   RightsizingEventBridge:
     Type: String
     Description: EventBridge rule name
-    Default: <EventBridge-rule-name>
+    Default: report-eventbridge-rule
 
 Resources:
 
@@ -60,7 +60,6 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-      AccessControl: BucketOwnerFullControl
       LifecycleConfiguration:
         Rules:
           - Id: Transition to Glacier after 90 days
@@ -162,8 +161,7 @@ Resources:
       FunctionName: !Ref RightsizingLambdaName
       Description: "Generate 2 rightsizing reports (a detailed and a summarized one) on the first Monday morning of each month."
       Code:
-        ZipFile:
-          !Sub |
+        ZipFile: |
           import boto3
           import csv
           import datetime
